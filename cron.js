@@ -27,6 +27,8 @@ cron.schedule(
     // Check if Event Already Exists
     const eventObj = await Event.find({ date });
     if (eventObj.length > 0) {
+      console.log("Event Exists.");
+      console.log("Exiting");
       return;
     }
 
