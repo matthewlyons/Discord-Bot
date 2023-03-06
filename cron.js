@@ -48,7 +48,7 @@ cron.schedule("0 12 * * 1", async function () {
 Date: Tuesday
 Use: Confirmation of Event Status
 */
-cron.schedule("0 10 * * 2", function () {
+cron.schedule("0 12 * * 2", function () {
   // Send Matt a Summary of Who is Attending
   // Send Users Cancelled or Approved Notice
   console.log("Tuesday");
@@ -58,7 +58,7 @@ cron.schedule("0 10 * * 2", function () {
 Date: Friday
 Use: Remind Confirmed Users for the Event
 */
-cron.schedule("0 10 * * 5", function () {
+cron.schedule("0 12 * * 5", function () {
   // Check if Event is happening
   // Message users to remind them
   console.log("Friday");
