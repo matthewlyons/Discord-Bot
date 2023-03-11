@@ -4,21 +4,27 @@ const Message = require("../../models/Message");
 
 module.exports = {
   async sendMessage(client, user, text, reactions) {
-    const guild = client.guilds.cache.get(PINEBROOK_ID);
-    let res = await guild.members.fetch();
-    client.users.cache
-      .get(user)
-      .send(text)
-      .then(function (message) {
-        reactions.forEach((x) => {
-          message.react(x);
+    try {
+      const guild = client.guilds.cache.get(PINEBROOK_ID);
+      let res = await guild.members.fetch();
+      client.users.cache
+        .get(user)
+        .send(text)
+        .then(function (message) {
+          if (reactions) {
+            reactions.forEach((x) => {
+              message.react(x);
+            });
+          }
+          let newMessage = new Message({
+            channel_id: message.channelId,
+            message_id: message.id,
+          });
+          newMessage.save();
         });
-        let newMessage = new Message({
-          channel_id: message.channelId,
-          message_id: message.id,
-        });
-        newMessage.save();
-      });
+    } catch (error) {
+      console.log(error);
+    }
   },
   async deleteMessage(client, channel_id, message_id, mongo) {
     try {
@@ -62,5 +68,8 @@ module.exports = {
       }
     });
     return users;
+  },
+  async homeOwnerComing(users) {
+    return true;
   },
 };
