@@ -32,7 +32,6 @@ module.exports = {
         channel.messages.delete(message_id);
       });
       let foundMessage = await Message.findByIdAndRemove(mongo);
-      console.log(foundMessage);
     } catch (error) {
       console.log(error);
     }
@@ -57,12 +56,12 @@ module.exports = {
     let res = await guild.members.fetch();
     return res;
   },
-  async getUsersWithEvent(client, event) {
+  async getUsersByRole(client, x) {
     const guild = client.guilds.cache.get(PINEBROOK_ID);
     let res = await guild.members.fetch();
     let users = [];
     res.forEach((member) => {
-      if (member.roles.cache.some((role) => role.name === event)) {
+      if (member.roles.cache.some((role) => role.name === x)) {
         let { username, id } = member.user;
         users.push({ username, id });
       }
