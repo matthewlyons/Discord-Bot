@@ -6,4 +6,11 @@ module.exports = {
       return ".\n------\nWill you be over for Anime this Saturday at Noon?\n\nReact  👍  for yes,  👎  for no\n--------";
     }
   },
+  eventReminderContent(type) {
+    if (type == "Game Night") {
+      return ".\n------\nReminder:\nGame Night is Tomorrow at 6PM\n--------";
+    } else {
+      return ".\n------\nReminder:\nAnime is Tomorrow at Noon\n--------";
+    }
+  },
 };
