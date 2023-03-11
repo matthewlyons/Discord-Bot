@@ -8,10 +8,14 @@ const Event = require("./models/Event");
 const {
   sendMessage,
   getNextSaturday,
-  getUsersWithEvent,
+  getUsersByRole,
   deleteMessage,
   eventSelection,
   eventMessageContent,
+  homeOwnerComing,
+  eventReminderContent,
+  adminMessageContent,
+  eventConfirmationContent,
 } = require("./helpers");
 
 /*
@@ -37,7 +41,7 @@ cron.schedule(
     newEvent.save();
 
     // Get Users for Event
-    let users = await getUsersWithEvent(client, type);
+    let users = await getUsersByRole(client, type);
 
     // Get Content for Message
     let messageContent = eventMessageContent(type);
@@ -59,10 +63,52 @@ Use: Confirmation of Event Status
 */
 cron.schedule(
   "0 12 * * 2",
-  function () {
-    // Send Matt a Summary of Who is Attending
+  async function () {
+    // Get Next Saturday
+    let date = getNextSaturday();
+    let type = eventSelection();
+
+    // Get Users for Event
+    let users = await getUsersByRole(client, type);
+
+    // Get Event By Date
+    const eventObj = await Event.findOne({ date });
+
+    // Get Users by Event
+    let { happening, coming } = eventObj;
+
+    let numUsers = users.length;
+    let numUsersComing = coming.length;
+
+    // Check if Ammount of Users coming is over threshold
+    if (type == "Anime") {
+      happening = numUsers == numUsersComing;
+    } else {
+      happening = numUsersComing > 4 && homeOwnerComing();
+    }
+
+    // Send Admins a Summary of Who is Attending
+    // Get Admin Users
+    let adminUsers = await getUsersByRole(client, type);
+
+    // Get Content for Message
+    let adminContent = adminMessageContent(type, happening, coming);
+
+    // Send Admin Users Messages
+    adminUsers.forEach((x) => {
+      sendMessage(client, x.id, adminContent);
+    });
+
     // Send Users Cancelled or Approved Notice
-    console.log("Tuesday");
+    let userContent = eventConfirmationContent(type, happening);
+    eventObj.coming.forEach((x) => {
+      sendMessage(client, x.id, userContent);
+    });
+    if (!happening) {
+      eventObj.happening = false;
+      eventObj.save();
+      return;
+    }
   },
   {
     scheduled: true,
@@ -76,10 +122,26 @@ Use: Remind Confirmed Users for the Event
 */
 cron.schedule(
   "0 12 * * 5",
-  function () {
+  async function () {
+    // Get Next Saturday
+    let date = getNextSaturday();
+
+    // Get Event By Date
+    const eventObj = await Event.findOne({ date });
+
     // Check if Event is happening
-    // Message users to remind them
-    console.log("Friday");
+    if (eventObj.happening) {
+      // Get Event Type
+      let type = eventSelection();
+
+      // Get Content for Message
+      let messageContent = eventReminderContent(type);
+
+      // Message confirmed users to remind them
+      eventObj.coming.forEach((x) => {
+        sendMessage(client, x.id, messageContent);
+      });
+    }
   },
   {
     scheduled: true,
