@@ -43,8 +43,10 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 
   // Now the message has been cached and is fully available
   if (reaction.emoji.name === "👍") {
+    console.log(username, ": Added a Thumbs Up");
     eventObj.coming.push(userObj);
   } else if (reaction.emoji.name === "👎") {
+    console.log(username, ": Added a Thumbs Down");
     eventObj.not_coming.push(userObj);
   }
   eventObj.save();
@@ -76,11 +78,13 @@ client.on(Events.MessageReactionRemove, async (reaction, user) => {
 
   // Now the message has been cached and is fully available
   if (reaction.emoji.name === "👍") {
+    console.log(username, ": Removed a Thumbs Up");
     let updatedArray = eventObj.coming.filter((x) => {
       return x.id !== id;
     });
     eventObj.coming = updatedArray;
   } else if (reaction.emoji.name === "👎") {
+    console.log(username, ": Removed a Thumbs Down");
     let updatedArray = eventObj.not_coming.filter((x) => {
       return x.id !== id;
     });
