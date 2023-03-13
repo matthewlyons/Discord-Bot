@@ -21,6 +21,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
     console.log(err);
     return;
   }
+  console.log("Recieved Response");
 
   // When a reaction is received, check if the structure is partial
   if (reaction.partial) {
@@ -58,6 +59,7 @@ client.on(Events.MessageReactionRemove, async (reaction, user) => {
   if (reaction.message.author.id === user.id) {
     return;
   }
+  console.log("Recieved Response");
   // When a reaction is received, check if the structure is partial
   if (reaction.partial) {
     // If the message this reaction belongs to was removed, the fetching might result in an API error which should be handled
