@@ -68,10 +68,23 @@ client.on(Events.MessageReactionRemove, async (reaction, user) => {
     }
   }
 
+  let eventDate = getNextSaturday();
+
+  const eventObj = await Event.findOne({ date: eventDate });
+
+  let { id, username } = user;
+
   // Now the message has been cached and is fully available
   if (reaction.emoji.name === "👍") {
-    console.log("You removed a thumbs up.");
+    let updatedArray = eventObj.coming.filter((x) => {
+      return x.id !== id;
+    });
+    eventObj.coming = updatedArray;
   } else if (reaction.emoji.name === "👎") {
-    console.log("You removed a thumbs down.");
+    let updatedArray = eventObj.not_coming.filter((x) => {
+      return x.id !== id;
+    });
+    eventObj.not_coming = updatedArray;
   }
+  eventObj.save();
 });
