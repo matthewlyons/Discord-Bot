@@ -89,7 +89,7 @@ cron.schedule(
 
     // Send Admins a Summary of Who is Attending
     // Get Admin Users
-    let adminUsers = await getUsersByRole(client, type);
+    let adminUsers = await getUsersByRole(client, "Admin");
 
     // Get Content for Message
     let adminContent = adminMessageContent(type, happening, coming);
